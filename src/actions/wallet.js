@@ -102,6 +102,30 @@ export const getTransactionHistory = createAsyncThunk(
     }
   }
 );
+export const getTransactionHistoryWithUsers = createAsyncThunk(
+  "wallet/getTransactionHistoryWithUsers",
+  async (_, thunkAPI) => {
+    try {
+      const response = await fetch(`${BASEURL}/api/v1/wallet/transactions`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message);
+      }
+
+      const data = await response.json();    
+      
+      return data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
 
 // Delete Transaction by ID
 export const deleteTransactionById = createAsyncThunk(

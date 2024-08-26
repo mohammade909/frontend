@@ -25,10 +25,13 @@ import {
   UserGroupIcon,
   XMarkIcon,
   UserIcon,
-  WalletIcon
+  WalletIcon,
+  BellSlashIcon,
+  BellAlertIcon
 } from "@heroicons/react/24/outline";
 import {
   BanknotesIcon,
+ 
   BuildingOfficeIcon,
   CheckCircleIcon,
   ChevronDownIcon,
@@ -52,6 +55,12 @@ const navigation = [
     name: "Accounts",
     href: "/trader/dashboard/accounts",
     icon: UserGroupIcon,
+    current: false,
+  },
+  {
+    name: "Notifications",
+    href: "/trader/dashboard/notifications",
+    icon: BellAlertIcon,
     current: false,
   },
   { name: "Reports", href: "#", icon: DocumentChartBarIcon, current: false },

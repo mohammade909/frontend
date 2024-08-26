@@ -25,10 +25,14 @@ import {
   CogIcon,
   ArchiveBoxIcon,
   AdjustmentsVerticalIcon,
+  PaperClipIcon,
+  DocumentChartBarIcon,
+  ArrowsRightLeftIcon,
 } from "@heroicons/react/24/outline";
 import {
   ChevronDownIcon,
   MagnifyingGlassIcon,
+  PowerIcon,
 } from "@heroicons/react/20/solid";
 import { Outlet } from "react-router-dom";
 const navigation = [
@@ -51,7 +55,24 @@ const navigation = [
       { name: "Brokers", href: "/admin/brokers" },
     ],
   },
-
+  {
+    name: "Notifications",
+    href: "/admin/notifications",
+    icon:BellIcon,
+    current: false,
+   
+  },
+  {
+    name: "Analytics",
+    href: "#",
+    icon: ChartPieIcon,
+    current: false,
+    subItems: [
+      { name: "Reports", href: "/admin/reports" },
+      { name: "Statistics", href: "/admin/statistics" },
+      { name: "Insights", href: "/admin/insights" },
+    ],
+  },
   {
     name: "Control Panel",
     href: "/admin/control-panel",
@@ -64,12 +85,13 @@ const navigation = [
     icon: AdjustmentsVerticalIcon,
     current: false,
   },
-  { name: "Reports", href: "#", icon: ChartPieIcon, current: false },
+  { name: "Reports", href: "/admin/achievers", icon: DocumentChartBarIcon, current: false },
+  { name: "Transactions", href: "/admin/transactions", icon:ArrowsRightLeftIcon, current: false },
+  { name: "Manage Server", href: "/admin/server", icon: PowerIcon, current: false },
 ];
+
 const teams = [
-  { id: 1, name: "Heroicons", href: "#", initial: "H", current: false },
-  { id: 2, name: "Tailwind Labs", href: "#", initial: "T", current: false },
-  { id: 3, name: "Workcation", href: "#", initial: "W", current: false },
+
 ];
 const userNavigation = [
   { name: "Your profile", href: "#" },
@@ -90,181 +112,64 @@ export default function DashboardLayout() {
     localStorage.clear();
     window.location.href = "/";
   };
+  const [activeDropdown, setActiveDropdown] = useState("");
+
   const handleDropdown = (name) => {
-    setDropdownOpen(!dropdownOpen);
-    setActive(name);
+    setActiveDropdown(activeDropdown === name ? "" : name);
   };
   return (
     <>
-      <div>
-        <Dialog
-          open={sidebarOpen}
-          onClose={setSidebarOpen}
-          className="relative z-50 lg:hidden"
-        >
-          <DialogBackdrop
+    <div>
+      <Dialog
+        open={sidebarOpen}
+        onClose={setSidebarOpen}
+        className="relative z-50 lg:hidden"
+      >
+        <DialogBackdrop
+          transition
+          className="fixed inset-0 bg-white border transition-opacity duration-300 ease-linear data-[closed]:opacity-0"
+        />
+
+        <div className="fixed inset-0 flex">
+          <DialogPanel
             transition
-            className="fixed inset-0 bg-white border transition-opacity duration-300 ease-linear data-[closed]:opacity-0"
-          />
-
-          <div className="fixed inset-0 flex">
-            <DialogPanel
-              transition
-              className="relative mr-16 flex w-full border max-w-xs flex-1 transform transition duration-300 ease-in-out data-[closed]:-translate-x-full border-r border-gray-200"
-            >
-              <TransitionChild>
-                <div className="absolute left-full top-0 flex w-16 justify-center pt-5 duration-300 ease-in-out data-[closed]:opacity-0">
-                  <button
-                    type="button"
-                    onClick={() => setSidebarOpen(false)}
-                    className="-m-2.5 p-2.5"
-                  >
-                    <span className="sr-only">Close sidebar</span>
-                    <XMarkIcon
-                      aria-hidden="true"
-                      className="h-6 w-6 text-white"
-                    />
-                  </button>
-                </div>
-              </TransitionChild>
-              {/* Sidebar component, swap this element with another sidebar if you like */}
-              <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-4 ring-1 ring-white/10 border-r border-gray-200">
-                <div className="flex h-16 shrink-0 items-center">
-                  <img
-                    alt="Your Company"
-                    src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-                    className="h-8 w-auto"
+            className="relative mr-16 flex w-full border max-w-xs flex-1 transform transition duration-300 ease-in-out data-[closed]:-translate-x-full border-r border-gray-200"
+          >
+            <TransitionChild>
+              <div className="absolute left-full top-0 flex w-16 justify-center pt-5 duration-300 ease-in-out data-[closed]:opacity-0">
+                <button
+                  type="button"
+                  onClick={() => setSidebarOpen(false)}
+                  className="-m-2.5 p-2.5"
+                >
+                  <span className="sr-only">Close sidebar</span>
+                  <XMarkIcon
+                    aria-hidden="true"
+                    className="h-6 w-6 text-white"
                   />
-                </div>
-                <nav className="flex flex-1 flex-col">
-                  <ul role="list" className="flex flex-1 flex-col gap-y-7">
-                    <li>
-                      <ul role="list" className="-mx-2 space-y-1">
-                        {navigation.map((item) =>
-                          item.name === "Configuration" ? (
-                            <li key={item.name} className="relative">
-                              <button
-                                type="button"
-                                className={classNames(
-                                  item.name === active
-                                    ? "bg-teal-100 text-teal-800"
-                                    : "text-teal-700 hover:bg-teal-100 hover:text-teal-800",
-                                  "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 w-full"
-                                )}
-                                aria-expanded="false"
-                                aria-haspopup="true"
-                                onClick={() => handleDropdown(item.name)} // Toggle the dropdown visibility
-                              >
-                                <item.icon
-                                  aria-hidden="true"
-                                  className="h-6 w-6 shrink-0"
-                                />
-                                {item.name}
-                              </button>
-
-                              {dropdownOpen && (
-                                <ul className="absolute left-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg">
-                                  {item.subItems.map((subItem) => (
-                                    <li key={subItem.name}>
-                                      <Link
-                                        to={subItem.href}
-                                        className="block px-4 py-2 text-sm text-teal-700 hover:bg-teal-100 hover:text-teal-800"
-                                      >
-                                        {subItem.name}
-                                      </Link>
-                                    </li>
-                                  ))}
-                                </ul>
-                              )}
-                            </li>
-                          ) : (
-                            <li key={item.name}>
-                              <button
-                                className={classNames(
-                                  item.name === active
-                                    ? "bg-teal-100 text-teal-800"
-                                    : "text-teal-700 hover:bg-teal-100 hover:text-teal-800",
-                                  "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6"
-                                )}
-                              >
-                                <item.icon
-                                  aria-hidden="true"
-                                  className="h-6 w-6 shrink-0"
-                                />
-                                {item.name}
-                              </button>
-                            </li>
-                          )
-                        )}
-                      </ul>
-                    </li>
-                    <li>
-                      <div className="text-xs font-semibold leading-6 text-teal-700">
-                        Your teams
-                      </div>
-                      <ul role="list" className="-mx-2 mt-2 space-y-1">
-                        {teams.map((team) => (
-                          <li key={team.name}>
-                            <a
-                              href={team.href}
-                              className={classNames(
-                                team.current
-                                  ? "bg-teal-100 text-teal-800"
-                                  : "text-teal-700 hover:bg-teal-100 hover:text-teal-800",
-                                "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6"
-                              )}
-                            >
-                              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-teal-100 text-[0.625rem] font-medium text-teal-700 group-hover:text-white">
-                                {team.initial}
-                              </span>
-                              <span className="truncate">{team.name}</span>
-                            </a>
-                          </li>
-                        ))}
-                      </ul>
-                    </li>
-                    <li className="mt-auto">
-                      <a
-                        href="#"
-                        className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-teal-700 hover:bg-teal-100 hover:text-teal-800"
-                      >
-                        <Cog6ToothIcon
-                          aria-hidden="true"
-                          className="h-6 w-6 shrink-0"
-                        />
-                        Settings
-                      </a>
-                    </li>
-                  </ul>
-                </nav>
+                </button>
               </div>
-            </DialogPanel>
-          </div>
-        </Dialog>
-
-        {/* Static sidebar for desktop */}
-        <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col border-r border-gray-200">
-          {/* Sidebar component, swap this element with another sidebar if you like */}
-          <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-4">
-            <div className="flex h-16 shrink-0 items-center">
-              <img
-                alt="Your Company"
-                src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-                className="h-8 w-auto"
-              />
-            </div>
-            <nav className="flex flex-1 flex-col">
-              <ul role="list" className="flex flex-1 flex-col gap-y-7">
-                <li>
-                  <ul role="list" className="-mx-2 space-y-1">
+            </TransitionChild>
+            {/* Sidebar component, swap this element with another sidebar if you like */}
+            <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-4 ring-1 ring-white/10 border-r border-gray-200">
+              <div className="flex h-16 shrink-0 items-center">
+                <img
+                  alt="Your Company"
+                  src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
+                  className="h-8 w-auto"
+                />
+              </div>
+              <nav className="flex flex-1 flex-col">
+                <ul role="list" className="flex flex-1 flex-col gap-y-7">
+                  <li>
                     <ul role="list" className="-mx-2 space-y-1">
-                      {navigation.map((item) =>
-                        item.name === "Configuration" ? (
+                      {navigation.map((item) => (
+                        item.subItems ? (
                           <li key={item.name} className="relative">
                             <button
                               type="button"
                               className={classNames(
-                                item.current
+                                item.name === activeDropdown
                                   ? "bg-teal-100 text-teal-800"
                                   : "text-teal-700 hover:bg-teal-100 hover:text-teal-800",
                                 "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 w-full"
@@ -280,8 +185,8 @@ export default function DashboardLayout() {
                               {item.name}
                             </button>
 
-                            {dropdownOpen && (
-                              <ul className="absolute left-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg">
+                            {activeDropdown === item.name && (
+                              <ul style={{zIndex:'100'}} className="absolute left-0 mt-2 w-48  bg-white border border-gray-200 rounded-md shadow-lg">
                                 {item.subItems.map((subItem) => (
                                   <li key={subItem.name}>
                                     <Link
@@ -314,53 +219,169 @@ export default function DashboardLayout() {
                             </Link>
                           </li>
                         )
-                      )}
+                      ))}
                     </ul>
-                  </ul>
-                </li>
-                <li>
-                  <div className="text-xs font-semibold leading-6 text-teal-700">
-                    Your teams
-                  </div>
-                  <ul role="list" className="-mx-2 mt-2 space-y-1">
-                    {teams.map((team) => (
-                      <li key={team.name}>
-                        <a
-                          href={team.href}
+                  </li>
+                  <li>
+                    <div className="text-xs font-semibold leading-6 text-teal-700">
+                      Your teams
+                    </div>
+                    <ul role="list" className="-mx-2 mt-2 space-y-1">
+                      {teams.map((team) => (
+                        <li key={team.name}>
+                          <a
+                            href={team.href}
+                            className={classNames(
+                              team.current
+                                ? "bg-teal-100 text-teal-800"
+                                : "text-teal-700 hover:bg-teal-100 hover:text-teal-800",
+                              "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6"
+                            )}
+                          >
+                            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-teal-100 text-[0.625rem] font-medium text-teal-700 group-hover:text-white">
+                              {team.initial}
+                            </span>
+                            <span className="truncate">{team.name}</span>
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </li>
+                  <li className="mt-auto">
+                    <a
+                      href="#"
+                      className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-teal-700 hover:bg-teal-100 hover:text-teal-800"
+                    >
+                      <Cog6ToothIcon
+                        aria-hidden="true"
+                        className="h-6 w-6 shrink-0"
+                      />
+                      Settings
+                    </a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </DialogPanel>
+        </div>
+      </Dialog>
+
+      {/* Static sidebar for desktop */}
+      <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col border-r border-gray-200">
+        {/* Sidebar component, swap this element with another sidebar if you like */}
+        <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-4">
+          <div className="flex h-16 shrink-0 items-center">
+            <img
+              alt="Your Company"
+              src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
+              className="h-8 w-auto"
+            />
+          </div>
+          <nav className="flex flex-1 flex-col">
+            <ul role="list" className="flex flex-1 flex-col gap-y-7">
+              <li>
+                <ul role="list" className="-mx-2 space-y-1">
+                  {navigation.map((item) => (
+                    item.subItems ? (
+                      <li key={item.name} className="relative">
+                        <button
+                          type="button"
                           className={classNames(
-                            team.current
+                            item.name === activeDropdown
+                              ? "bg-teal-100 text-teal-800"
+                              : "text-teal-700 hover:bg-teal-100 hover:text-teal-800",
+                            "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 w-full"
+                          )}
+                          aria-expanded="false"
+                          aria-haspopup="true"
+                          onClick={() => handleDropdown(item.name)} // Toggle the dropdown visibility
+                        >
+                          <item.icon
+                            aria-hidden="true"
+                            className="h-6 w-6 shrink-0"
+                          />
+                          {item.name}
+                        </button>
+
+                        {activeDropdown === item.name && (
+                          <ul className="absolute z-50 left-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg">
+                            {item.subItems.map((subItem) => (
+                              <li key={subItem.name}>
+                                <Link
+                                  to={subItem.href}
+                                  className="block px-4 py-2 text-sm text-teal-700 hover:bg-teal-100 hover:text-teal-800"
+                                >
+                                  {subItem.name}
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </li>
+                    ) : (
+                      <li key={item.name}>
+                        <Link
+                          to={item.href}
+                          className={classNames(
+                            item.current
                               ? "bg-teal-100 text-teal-800"
                               : "text-teal-700 hover:bg-teal-100 hover:text-teal-800",
                             "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6"
                           )}
                         >
-                          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-teal-100 text-[0.625rem] font-medium text-teal-700 group-hover:text-white">
-                            {team.initial}
-                          </span>
-                          <span className="truncate">{team.name}</span>
-                        </a>
+                          <item.icon
+                            aria-hidden="true"
+                            className="h-6 w-6 shrink-0"
+                          />
+                          {item.name}
+                        </Link>
                       </li>
-                    ))}
-                  </ul>
-                </li>
-                <li className="mt-auto">
-                  <a
-                    href="#"
-                    className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-teal-700 hover:bg-teal-100 hover:text-teal-800"
-                  >
-                    <Cog6ToothIcon
-                      aria-hidden="true"
-                      className="h-6 w-6 shrink-0"
-                    />
-                    Settings
-                  </a>
-                </li>
-              </ul>
-            </nav>
-          </div>
+                    )
+                  ))}
+                </ul>
+              </li>
+              <li>
+                <div className="text-xs font-semibold leading-6 text-teal-700">
+                  Your teams
+                </div>
+                <ul role="list" className="-mx-2 mt-2 space-y-1">
+                  {teams.map((team) => (
+                    <li key={team.name}>
+                      <a
+                        href={team.href}
+                        className={classNames(
+                          team.current
+                            ? "bg-teal-100 text-teal-800"
+                            : "text-teal-700 hover:bg-teal-100 hover:text-teal-800",
+                          "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6"
+                        )}
+                      >
+                        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-teal-100 text-[0.625rem] font-medium text-teal-700 group-hover:text-white">
+                          {team.initial}
+                        </span>
+                        <span className="truncate">{team.name}</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+              <li className="mt-auto">
+                <a
+                  href="#"
+                  className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-teal-700 hover:bg-teal-100 hover:text-teal-800"
+                >
+                  <Cog6ToothIcon
+                    aria-hidden="true"
+                    className="h-6 w-6 shrink-0"
+                  />
+                  Settings
+                </a>
+              </li>
+            </ul>
+          </nav>
         </div>
-
-        <div className="lg:pl-72">
+      </div>
+      <div className="lg:pl-72">
           <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
             <button
               type="button"
@@ -464,11 +485,11 @@ export default function DashboardLayout() {
             </div>
           </div>
 
-          <main className="py-10 bg-slate-100/80">
+          <main className="py-10 bg-cyan-50/15">
             <Outlet />
           </main>
         </div>
-      </div>
-    </>
+    </div>
+  </>
   );
 }

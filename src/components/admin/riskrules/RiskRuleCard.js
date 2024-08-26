@@ -9,6 +9,7 @@ const RiskRuleCard = ({
   drawdown_daily,
   drawdown_weekly,
   drawdown_monthly,
+  drawdown_overall,
   profit_share,
   max_open_lot,
   leverage,
@@ -24,6 +25,7 @@ const RiskRuleCard = ({
 }) => {
   const dispatch = useDispatch();
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
   const handleDelete = () => {
     dispatch(deleteRiskRule(rule_id));
@@ -34,30 +36,89 @@ const RiskRuleCard = ({
     <div className="bg-white shadow-md rounded-lg p-4 w-full max-w-sm relative">
       <h2 className="text-xl font-semibold mb-4">{rule_name}</h2>
       <div className="space-y-2">
-        <div>
-          <span className="font-medium">Calculation Type: </span>
-          {calculation_type}
+        <div className="flex justify-between capitalize py-1">
+          <span className="font-medium">Calculation Type:</span>
+          {calculation_type.replace('_', ' ')}
         </div>
-        <div>
-          <span className="font-medium">Daily: </span>
-          {drawdown_daily}%
+        <div className="flex justify-between py-1">
+          <span className="font-medium">Daily:</span>
+          <span>{Number(drawdown_daily).toFixed(0)}%</span>
         </div>
-        <div>
-          <span className="font-medium">Weekly: </span>
-          {drawdown_weekly}%
+        <div className="flex justify-between py-1">
+          <span className="font-medium">Weekly:</span>
+          <span>{Number(drawdown_weekly).toFixed(0)}%</span>
         </div>
-        <div>
-          <span className="font-medium">Monthly: </span>
-          {drawdown_monthly}%
+        <div className="flex justify-between py-1">
+          <span className="font-medium">Monthly:</span>
+          <span>{Number(drawdown_monthly).toFixed(0)}%</span>
+        </div>
+        <div className="flex justify-between py-1">
+          <span className="font-medium">Overall:</span>
+          <span>{Number(drawdown_overall).toFixed(0)}%</span>
         </div>
       </div>
+
+      {/* Button to show more details */}
+      <button
+        onClick={() => setIsDetailsOpen(!isDetailsOpen)}
+        className="mt-4 text-blue-500 hover:underline focus:outline-none"
+      >
+        {isDetailsOpen ? "Hide Details" : "See More Details"}
+      </button>
+
+      {/* Additional details section */}
+      {isDetailsOpen && (
+        <div className="mt-4 space-y-2">
+          <div className="flex justify-between py-1">
+            <span className="font-medium">Addons:</span>
+            <span>{addons ? "Yes" : "No"}</span>
+          </div>
+          <div className="flex justify-between py-1">
+            <span className="font-medium">New Trade:</span>
+            <span>{new_trade ? "Allowed" : "Not Allowed"}</span>
+          </div>
+          <div className="flex justify-between py-1">
+            <span className="font-medium">Extension:</span>
+            <span>{extension ? "Allowed" : "Not Allowed"}</span>
+          </div>
+          <div className="flex justify-between py-1">
+            <span className="font-medium">Carry Forward:</span>
+            <span>{carry_forward ? "Allowed" : "Not Allowed"}</span>
+          </div>
+          <div className="flex justify-between py-1">
+            <span className="font-medium">EA Allowed:</span>
+            <span>{EA_allowed ? "Yes" : "No"}</span>
+          </div>
+          <div className="flex justify-between py-1">
+            <span className="font-medium">Repetition:</span>
+            <span>{repetition ? "Allowed" : "Not Allowed"}</span>
+          </div>
+          <div className="flex justify-between py-1">
+            <span className="font-medium">HFT Allowed:</span>
+            <span>{HFT_allowed ? "Yes" : "No"}</span>
+          </div>
+          <div className="flex justify-between py-1">
+            <span className="font-medium">Scalping:</span>
+            <span>{scalping ? "Allowed" : "Not Allowed"}</span>
+          </div>
+          <div className="flex justify-between py-1">
+            <span className="font-medium">Created At:</span>
+            <span>{new Date(created_at).toLocaleDateString()}</span>
+          </div>
+        </div>
+      )}
+
       <div className="mt-4 grid grid-cols-3 gap-2 text-center">
         <div className="bg-green-100 rounded-md p-2">
-          <div className="text-green-600 font-semibold">{profit_share}%</div>
+          <div className="text-green-600 font-semibold">
+            {Number(profit_share).toFixed(0)}%
+          </div>
           <div className="text-xs">Profit Share</div>
         </div>
         <div className="bg-green-100 rounded-md p-2">
-          <div className="text-green-600 font-semibold">{max_open_lot}</div>
+          <div className="text-green-600 font-semibold">
+            {Number(max_open_lot).toFixed(0)}
+          </div>
           <div className="text-xs">Max Op. Lot</div>
         </div>
         <div className="bg-green-100 rounded-md p-2">
@@ -65,9 +126,12 @@ const RiskRuleCard = ({
           <div className="text-xs">Leverage</div>
         </div>
       </div>
+
       <div className="absolute top-4 right-4 flex space-x-2">
         <button
-          onClick={() => {/* Handle Edit */}}
+          onClick={() => {
+            /* Handle Edit */
+          }}
           className="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600"
         >
           Edit

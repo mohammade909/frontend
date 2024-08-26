@@ -5,14 +5,17 @@ import {
   withdrawMoney,
   getTransactionHistory,
   deleteTransactionById,
+  getTransactionHistoryWithUsers
 } from "../actions/wallet";
 
 const walletSlice = createSlice({
   name: "wallet",
   initialState: {
     balance: 0,
+    wallet:null,
     transactions: [],
     loading: false,
+    totals:null,
     error: null,
     message: null,
   },
@@ -34,6 +37,7 @@ const walletSlice = createSlice({
       .addCase(getWalletBalance.fulfilled, (state, action) => {
         state.loading = false;
         state.balance = action.payload.balance;
+        state.wallet = action.payload.wallet_id;
       })
       .addCase(getWalletBalance.rejected, (state, action) => {
         state.loading = false;
@@ -80,6 +84,20 @@ const walletSlice = createSlice({
         state.transactions = action.payload.transactions;
       })
       .addCase(getTransactionHistory.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload.error;
+      })
+      // Get All Transaction History
+      .addCase(getTransactionHistoryWithUsers.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getTransactionHistoryWithUsers.fulfilled, (state, action) => {
+        state.loading = false;
+        state.transactions = action.payload.transactions;
+        state.totals = action.payload.totals;
+      })
+      .addCase(getTransactionHistoryWithUsers.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload.error;
       })

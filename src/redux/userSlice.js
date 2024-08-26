@@ -1,10 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getUsers, createUser, deleteUser, updateUser, getUserById } from "../actions/user";
+import { getUsers, createUser,fetchLevels,updateLevelStatusByUserId, deleteUser, updateUser, getUserById } from "../actions/user";
 // Example asynchronous thunk to handle login
 
 const initialState = {
   users: null,
   loading: false,
+  levels:[],
   error: null,
   message: null,
   user: null,
@@ -51,7 +52,20 @@ const staffSlice = createSlice({
       })
       .addCase(getUsers.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload.error;
+        state.error = action.payload;
+      })
+      .addCase(fetchLevels.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchLevels.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+        state.levels = action.payload.levels;
+      })
+      .addCase(fetchLevels.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       })
       .addCase(getUserById.pending, (state) => {
         state.loading = true;
@@ -94,7 +108,23 @@ const staffSlice = createSlice({
         state.error = action.payload.error;
       })
 
-     
+      builder
+      .addCase(updateLevelStatusByUserId.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updateLevelStatusByUserId.fulfilled, (state, action) => {
+        state.loading = false;
+        // Update the state with the updated level status
+        const updatedLevel = action.payload;
+        const index = state.levels.findIndex((level) => level.user_id === updatedLevel.user_id);
+        if (index !== -1) {
+          state.levels[index] = updatedLevel;
+        }
+      })
+      .addCase(updateLevelStatusByUserId.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload.error;
+      });
   },
 });
 

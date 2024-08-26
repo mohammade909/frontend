@@ -155,3 +155,47 @@ export const updateUser = createAsyncThunk(
     }
   }
 );
+
+export const fetchLevels = createAsyncThunk(
+  'levels/fetchLevels',
+  async (_, thunkAPI) => {
+    try {
+      const response = await fetch(`${BASEURL}/api/v1/achievers`);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message);
+      }
+      const data = await response.json();
+          
+      return data;
+    } catch (error) {
+      console.error('Failed to fetch levels:', error);
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
+export const updateLevelStatusByUserId = createAsyncThunk(
+  'levels/updateLevelStatusByUserId',
+  async ({ user_id, level_status }, thunkAPI) => {
+    try {
+      const response = await fetch(`${BASEURL}/api/v1/achievers/levels/${user_id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ level_status }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Failed to update level status:', error);
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);

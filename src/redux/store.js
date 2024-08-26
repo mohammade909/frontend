@@ -12,6 +12,7 @@ import brokerReducer from "./brokerSlice";
 import riskruleReducer from "./riskruleSlice";
 import accountReducer from "./accountSlice";
 import walletReducer from "./walletSlice";
+import notificationReducer from "./notificationSlice";
 
 
 const rootReducer = combineReducers({
@@ -23,6 +24,7 @@ const rootReducer = combineReducers({
   riskrules: riskruleReducer,// Add any other reducers here.
   accounts: accountReducer,// Add any other reducers here.
   wallet: walletReducer,// Add any other reducers here.
+  notifications: notificationReducer,// Add any other reducers here.
 });
 
 const persistConfig = {
